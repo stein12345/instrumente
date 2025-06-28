@@ -110,93 +110,27 @@ class MusicQuiz {
         playBtn.textContent = '🎵 Wird abgespielt...';
         playBtn.disabled = true;
         
-        // Verbesserte Audio-Wiedergabe mit charakteristischen Klängen
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // Echte Audio-Dateien von Pixabay verwenden
+        const audioId = `audio-${currentInstrument}`;
+        const audio = document.getElementById(audioId);
         
-        const instrumentSounds = {
-            'klavier': {
-                frequencies: [261.63, 329.63, 392.00],
-                type: 'triangle',
-                duration: 2
-            },
-            'gitarre': {
-                frequencies: [82.41, 110.00, 146.83, 196.00, 246.94, 329.63],
-                type: 'sawtooth',
-                duration: 1.5
-            },
-            'floete': {
-                frequencies: [523.25, 659.25, 783.99],
-                type: 'sine',
-                duration: 2.5
-            },
-            'trommel': {
-                frequencies: [60, 80, 100],
-                type: 'square',
-                duration: 0.8
-            },
-            'violine': {
-                frequencies: [440.00, 493.88, 523.25],
-                type: 'sine',
-                duration: 2
-            },
-            'saxophon': {
-                frequencies: [220.00, 246.94, 277.18],
-                type: 'sawtooth',
-                duration: 2.5
-            }
-        };
-        
-        const sound = instrumentSounds[currentInstrument];
-        
-        sound.frequencies.forEach((freq, index) => {
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            const filter = audioContext.createBiquadFilter();
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play();
             
-            oscillator.connect(filter);
-            filter.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            // Instrument-spezifische Filterung
-            if (currentInstrument === 'klavier') {
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(2000, audioContext.currentTime);
-            } else if (currentInstrument === 'gitarre') {
-                filter.type = 'bandpass';
-                filter.frequency.setValueAtTime(800, audioContext.currentTime);
-            } else if (currentInstrument === 'floete') {
-                filter.type = 'highpass';
-                filter.frequency.setValueAtTime(400, audioContext.currentTime);
-            } else if (currentInstrument === 'trommel') {
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(200, audioContext.currentTime);
-            } else if (currentInstrument === 'violine') {
-                filter.type = 'highpass';
-                filter.frequency.setValueAtTime(300, audioContext.currentTime);
-            } else if (currentInstrument === 'saxophon') {
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(1500, audioContext.currentTime);
-            }
-            
-            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
-            oscillator.type = sound.type;
-            
-            const startTime = audioContext.currentTime + (index * 0.1);
-            const endTime = startTime + sound.duration;
-            
-            gainNode.gain.setValueAtTime(0, startTime);
-            gainNode.gain.linearRampToValueAtTime(0.2, startTime + 0.1);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, endTime);
-            
-            oscillator.start(startTime);
-            oscillator.stop(endTime);
-        });
-        
-        setTimeout(() => {
-            playBtn.textContent = originalText;
-            playBtn.disabled = false;
-            this.isPlaying = false;
-        }, sound.duration * 1000);
+            audio.onended = () => {
+                playBtn.textContent = originalText;
+                playBtn.disabled = false;
+                this.isPlaying = false;
+            };
+        } else {
+            // Fallback falls Audio nicht gefunden wird
+            setTimeout(() => {
+                playBtn.textContent = originalText;
+                playBtn.disabled = false;
+                this.isPlaying = false;
+            }, 2000);
+        }
     }
     
     checkAnswer(selectedOption) {
