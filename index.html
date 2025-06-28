@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musikinstrumente lernen - Hausaufgabe</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <h1>🎵 Musikinstrumente lernen</h1>
+                <ul class="nav-menu">
+                    <li><a href="#lernen" class="nav-link active">Lernen</a></li>
+                    <li><a href="#quiz" class="nav-link">Quiz</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Lernbereich -->
+        <section id="lernen" class="section active">
+            <div class="container">
+                <h2>Musikinstrumente kennenlernen</h2>
+                <p class="intro">Lerne verschiedene Musikinstrumente kennen. Klicke auf die Bilder, um mehr zu erfahren und höre dir die Hörbeispiele an!</p>
+                
+                <div class="instruments-grid">
+                    <div class="instrument-card" data-instrument="klavier">
+                        <div class="instrument-image">
+                            <img src="https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=400&h=300&fit=crop" alt="Klavier">
+                        </div>
+                        <div class="instrument-info">
+                            <h3>Klavier</h3>
+                            <p>Das Klavier ist ein Tasteninstrument mit 88 Tasten. Es kann sowohl Melodien als auch Akkorde spielen.</p>
+                            <button class="play-btn" onclick="playSound('klavier')">🎵 Hörbeispiel abspielen</button>
+                        </div>
+                    </div>
+
+                    <div class="instrument-card" data-instrument="gitarre">
+                        <div class="instrument-image">
+                            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop" alt="Gitarre">
+                        </div>
+                        <div class="instrument-info">
+                            <h3>Gitarre</h3>
+                            <p>Die Gitarre ist ein Saiteninstrument mit 6 Saiten. Sie wird mit den Fingern oder einem Plektrum gespielt.</p>
+                            <button class="play-btn" onclick="playSound('gitarre')">🎵 Hörbeispiel abspielen</button>
+                        </div>
+                    </div>
+
+                    <div class="instrument-card" data-instrument="floete">
+                        <div class="instrument-image">
+                            <img src="https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=400&h=300&fit=crop" alt="Flöte">
+                        </div>
+                        <div class="instrument-info">
+                            <h3>Flöte</h3>
+                            <p>Die Flöte ist ein Holzblasinstrument. Sie hat einen hellen, klaren Klang und wird quer gehalten.</p>
+                            <button class="play-btn" onclick="playSound('floete')">🎵 Hörbeispiel abspielen</button>
+                        </div>
+                    </div>
+
+                    <div class="instrument-card" data-instrument="trommel">
+                        <div class="instrument-image">
+                            <img src="https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=400&h=300&fit=crop" alt="Trommel">
+                        </div>
+                        <div class="instrument-info">
+                            <h3>Trommel</h3>
+                            <p>Die Trommel ist ein Schlaginstrument. Sie gibt den Rhythmus vor und wird mit Stöcken gespielt.</p>
+                            <button class="play-btn" onclick="playSound('trommel')">🎵 Hörbeispiel abspielen</button>
+                        </div>
+                    </div>
+
+                    <div class="instrument-card" data-instrument="violine">
+                        <div class="instrument-image">
+                            <img src="https://images.unsplash.com/photo-1598653222000-6b7b7a552625?w=400&h=300&fit=crop" alt="Violine">
+                        </div>
+                        <div class="instrument-info">
+                            <h3>Violine</h3>
+                            <p>Die Violine ist ein Streichinstrument mit 4 Saiten. Sie wird mit einem Bogen gespielt.</p>
+                            <button class="play-btn" onclick="playSound('violine')">🎵 Hörbeispiel abspielen</button>
+                        </div>
+                    </div>
+
+                    <div class="instrument-card" data-instrument="saxophon">
+                        <div class="instrument-image">
+                            <img src="https://images.unsplash.com/photo-1598653222000-6b7b7a552625?w=400&h=300&fit=crop" alt="Saxophon">
+                        </div>
+                        <div class="instrument-info">
+                            <h3>Saxophon</h3>
+                            <p>Das Saxophon ist ein Holzblasinstrument mit einem warmen, ausdrucksvollen Klang.</p>
+                            <button class="play-btn" onclick="playSound('saxophon')">🎵 Hörbeispiel abspielen</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz-Bereich -->
+        <section id="quiz" class="section">
+            <div class="container">
+                <h2>Quiz: Instrumente erkennen</h2>
+                <p class="intro">Höre dir die Hörbeispiele an und ordne sie den richtigen Instrumenten zu!</p>
+                
+                <div class="quiz-container">
+                    <div class="quiz-controls">
+                        <button id="startQuiz" class="btn-primary">Quiz starten</button>
+                        <button id="nextQuestion" class="btn-secondary" style="display: none;">Nächste Frage</button>
+                    </div>
+                    
+                    <div id="quizQuestion" class="quiz-question" style="display: none;">
+                        <h3>Welches Instrument hörst du?</h3>
+                        <div class="audio-player">
+                            <button id="playAudio" class="play-btn-large">🎵 Hörbeispiel abspielen</button>
+                        </div>
+                        
+                        <div class="quiz-options">
+                            <button class="quiz-option" data-instrument="klavier">Klavier</button>
+                            <button class="quiz-option" data-instrument="gitarre">Gitarre</button>
+                            <button class="quiz-option" data-instrument="floete">Flöte</button>
+                            <button class="quiz-option" data-instrument="trommel">Trommel</button>
+                            <button class="quiz-option" data-instrument="violine">Violine</button>
+                            <button class="quiz-option" data-instrument="saxophon">Saxophon</button>
+                        </div>
+                    </div>
+                    
+                    <div id="quizResults" class="quiz-results" style="display: none;">
+                        <h3>Quiz beendet!</h3>
+                        <p>Dein Ergebnis: <span id="score">0</span> von <span id="total">0</span> Punkten</p>
+                        <button id="restartQuiz" class="btn-primary">Quiz wiederholen</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Musikinstrumente lernen - Hausaufgabe für Musikschüler</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
