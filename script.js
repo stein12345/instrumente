@@ -19,49 +19,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Audio-Funktionalität für Hörbeispiele
+// Verbesserte Audio-Funktionalität mit charakteristischen Klängen
 function playSound(instrument) {
-    // Hier würden echte Audio-Dateien abgespielt werden
-    // Für Demo-Zwecke verwenden wir Web Audio API mit synthetischen Tönen
-    
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    // Verschiedene Frequenzen für verschiedene Instrumente
-    const frequencies = {
-        'klavier': 440, // A4
-        'gitarre': 330, // E4
-        'floete': 880,  // A5
-        'trommel': 150, // Niedrige Frequenz für Trommel
-        'violine': 660, // E5
-        'saxophon': 220 // A3
-    };
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.setValueAtTime(frequencies[instrument], audioContext.currentTime);
-    oscillator.type = 'sine';
-    
-    // Envelope für natürlicheren Klang
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-    
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 1);
-    
-    // Visuelles Feedback
-    const button = event.target;
-    const originalText = button.textContent;
-    button.textContent = '🎵 Wird abgespielt...';
-    button.disabled = true;
-    
-    setTimeout(() => {
-        button.textContent = originalText;
-        button.disabled = false;
-    }, 1000);
+    const audioId = `audio-${instrument}`;
+    const audio = document.getElementById(audioId);
+    if (audio) {
+        audio.currentTime = 0;
+        audio.play();
+        // Visuelles Feedback
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = '🎵 Wird abgespielt...';
+        button.disabled = true;
+        audio.onended = () => {
+            button.textContent = originalText;
+            button.disabled = false;
+        };
+    }
 }
 
 // Quiz-Funktionalität
@@ -136,38 +110,93 @@ class MusicQuiz {
         playBtn.textContent = '🎵 Wird abgespielt...';
         playBtn.disabled = true;
         
-        // Audio abspielen
+        // Verbesserte Audio-Wiedergabe mit charakteristischen Klängen
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
         
-        const frequencies = {
-            'klavier': 440,
-            'gitarre': 330,
-            'floete': 880,
-            'trommel': 150,
-            'violine': 660,
-            'saxophon': 220
+        const instrumentSounds = {
+            'klavier': {
+                frequencies: [261.63, 329.63, 392.00],
+                type: 'triangle',
+                duration: 2
+            },
+            'gitarre': {
+                frequencies: [82.41, 110.00, 146.83, 196.00, 246.94, 329.63],
+                type: 'sawtooth',
+                duration: 1.5
+            },
+            'floete': {
+                frequencies: [523.25, 659.25, 783.99],
+                type: 'sine',
+                duration: 2.5
+            },
+            'trommel': {
+                frequencies: [60, 80, 100],
+                type: 'square',
+                duration: 0.8
+            },
+            'violine': {
+                frequencies: [440.00, 493.88, 523.25],
+                type: 'sine',
+                duration: 2
+            },
+            'saxophon': {
+                frequencies: [220.00, 246.94, 277.18],
+                type: 'sawtooth',
+                duration: 2.5
+            }
         };
         
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+        const sound = instrumentSounds[currentInstrument];
         
-        oscillator.frequency.setValueAtTime(frequencies[currentInstrument], audioContext.currentTime);
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 1);
+        sound.frequencies.forEach((freq, index) => {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+            
+            oscillator.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Instrument-spezifische Filterung
+            if (currentInstrument === 'klavier') {
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(2000, audioContext.currentTime);
+            } else if (currentInstrument === 'gitarre') {
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(800, audioContext.currentTime);
+            } else if (currentInstrument === 'floete') {
+                filter.type = 'highpass';
+                filter.frequency.setValueAtTime(400, audioContext.currentTime);
+            } else if (currentInstrument === 'trommel') {
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(200, audioContext.currentTime);
+            } else if (currentInstrument === 'violine') {
+                filter.type = 'highpass';
+                filter.frequency.setValueAtTime(300, audioContext.currentTime);
+            } else if (currentInstrument === 'saxophon') {
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1500, audioContext.currentTime);
+            }
+            
+            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+            oscillator.type = sound.type;
+            
+            const startTime = audioContext.currentTime + (index * 0.1);
+            const endTime = startTime + sound.duration;
+            
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(0.2, startTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, endTime);
+            
+            oscillator.start(startTime);
+            oscillator.stop(endTime);
+        });
         
         setTimeout(() => {
             playBtn.textContent = originalText;
             playBtn.disabled = false;
             this.isPlaying = false;
-        }, 1000);
+        }, sound.duration * 1000);
     }
     
     checkAnswer(selectedOption) {
